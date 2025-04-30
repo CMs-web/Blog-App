@@ -1,9 +1,9 @@
 // Create blog page
+"use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { toast } from "@/components/ui/use-toast";
+// import { toast } from "@/components/ui/use-toast";
 import { Image, Save } from "lucide-react";
-import BlogLayout from "../components/BlogLayout";
 
 const CreateBlog = () => {
   const [form, setForm] = useState({
@@ -76,21 +76,21 @@ const CreateBlog = () => {
 
     // Simple validation
     if (!form.title || !form.slug || !form.excerpt || !form.content) {
-      toast({
-        title: "Missing information",
-        description: "Please fill out all required fields.",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Missing information",
+      //   description: "Please fill out all required fields.",
+      //   variant: "destructive",
+      // });
       return;
     }
 
     // In a real app, you would send this to your backend
     console.log("Submitting blog post:", form);
 
-    toast({
-      title: "Success!",
-      description: "Your blog post has been created.",
-    });
+    // toast({
+    //   title: "Success!",
+    //   description: "Your blog post has been created.",
+    // });
 
     // Reset form
     setForm({
@@ -104,7 +104,7 @@ const CreateBlog = () => {
   };
 
   return (
-    <BlogLayout>
+    <>
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
@@ -309,7 +309,7 @@ const CreateBlog = () => {
           </motion.div>
         </div>
       </section>
-    </BlogLayout>
+    </>
   );
 };
 

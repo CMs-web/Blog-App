@@ -1,14 +1,15 @@
 // Blog detail page
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Calendar, User, Tag } from "lucide-react";
-import BlogLayout from "../components/BlogLayout";
-import NewsletterSignup from "../components/NewsletterSignup";
+import NewsletterSignup from "../../../components/NewsletterSignup";
+// import { useRouter } from "next/router";
 
-const BlogDetail = async ({ params }) => {
-  const { slug } = await params();
+const BlogDetail = ({ params }) => {
+  const { slug } = use(params);
+  // const { slug } = router.query;
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -81,19 +82,17 @@ const BlogDetail = async ({ params }) => {
 
   if (loading) {
     return (
-      <BlogLayout>
-        <div className="container mx-auto px-4 md:px-6 py-16 flex justify-center">
-          <div className="animate-pulse space-y-8 w-full max-w-3xl">
-            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-64 bg-gray-200 rounded"></div>
-            <div className="space-y-4">
-              <div className="h-4 bg-gray-200 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-            </div>
+      <div className="container mx-auto px-4 md:px-6 py-16 flex justify-center">
+        <div className="animate-pulse space-y-8 w-full max-w-3xl">
+          <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="space-y-4">
+            <div className="h-4 bg-gray-200 rounded w-full"></div>
+            <div className="h-4 bg-gray-200 rounded w-full"></div>
+            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
           </div>
         </div>
-      </BlogLayout>
+      </div>
     );
   }
 
