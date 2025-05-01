@@ -98,7 +98,7 @@ const BlogDetail = ({ params }) => {
 
   if (!post) {
     return (
-      <BlogLayout>
+      <>
         <div className="container mx-auto px-4 md:px-6 py-16 text-center">
           <h1 className="text-3xl font-serif mb-4">Post not found</h1>
           <p className="mb-8 text-blog-text">
@@ -111,7 +111,7 @@ const BlogDetail = ({ params }) => {
             Back to all articles
           </Link>
         </div>
-      </BlogLayout>
+      </>
     );
   }
 
@@ -122,7 +122,7 @@ const BlogDetail = ({ params }) => {
   });
 
   return (
-    <BlogLayout>
+    <>
       {/* Hero section */}
       <section className="pt-12 md:pt-16 pb-8">
         <div className="container mx-auto px-4 md:px-6">
@@ -276,7 +276,7 @@ const BlogDetail = ({ params }) => {
       </section>
 
       <NewsletterSignup />
-    </BlogLayout>
+    </>
   );
 };
 
