@@ -4,7 +4,7 @@ import { Calendar } from "lucide-react";
 
 // Blog card component that accepts a post object
 const BlogCard = ({ post }) => {
-  const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-US", {
+  const formattedDate = new Date(post.createdAt).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -39,7 +39,7 @@ const BlogCard = ({ post }) => {
         </Link>
 
         <p className="text-blog-text text-sm line-clamp-2 mb-4">
-          {post.excerpt}
+          {post.description}
         </p>
 
         <Link

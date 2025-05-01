@@ -2,20 +2,19 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
-// import { toast } from "@/components/ui/use-toast";
 import { Image, Save } from "lucide-react";
+import { toast } from "sonner";
 
 const CreateBlog = () => {
   const [form, setForm] = useState({
     title: "",
     slug: "",
-    excerpt: "",
+    description: "",
     content: "",
     coverImage: "",
   });
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [imagePreview, setImagePreview] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,44 +29,12 @@ const CreateBlog = () => {
         .trim(); // Trim leading/trailing spaces
 
       setForm((prev) => ({ ...prev, [name]: value, slug }));
+    }
+
+    if (name === "coverImage") {
+      setForm((prev) => ({ ...prev, [name]: value }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImagePreview(reader.result);
-        setForm((prev) => ({ ...prev, coverImage: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImagePreview(reader.result);
-        setForm((prev) => ({ ...prev, coverImage: reader.result }));
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -75,32 +42,52 @@ const CreateBlog = () => {
     e.preventDefault();
 
     // Simple validation
-    if (!form.title || !form.slug || !form.excerpt || !form.content) {
-      // toast({
-      //   title: "Missing information",
-      //   description: "Please fill out all required fields.",
-      //   variant: "destructive",
-      // });
+    if (!form.title || !form.slug || !form.description || !form.content) {
+      toast({
+        title: "Missing information",
+        // description: "Please fill out all required fields.",
+        variant: "destructive",
+      });
       return;
     }
 
     // In a real app, you would send this to your backend
     console.log("Submitting blog post:", form);
 
-    // toast({
-    //   title: "Success!",
-    //   description: "Your blog post has been created.",
-    // });
+    // post to your backend API
+    try {
+      setIsCreating(true);
+      fetch("/api/blogs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+      toast({
+        title: "Success",
+        description: "Blog post created successfully.",
+        variant: "default",
+      });
+    } catch (error) {
+      console.log("Error creating blog:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create blog post.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreating(false);
+    }
 
     // Reset form
     setForm({
       title: "",
       slug: "",
-      excerpt: "",
+      description: "",
       content: "",
       coverImage: "",
     });
-    setImagePreview("");
   };
 
   return (
@@ -144,7 +131,7 @@ const CreateBlog = () => {
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blog-primary"
                   placeholder="Enter a descriptive title"
-                  required
+                  // required
                 />
               </div>
 
@@ -168,7 +155,7 @@ const CreateBlog = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-r-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blog-primary"
                     placeholder="url-friendly-slug"
-                    required
+                    // required
                   />
                 </div>
                 <p className="text-sm text-blog-text mt-1">
@@ -176,100 +163,56 @@ const CreateBlog = () => {
                 </p>
               </div>
 
-              {/* Excerpt */}
+              {/* description */}
               <div>
                 <label
                   className="block text-sm font-medium mb-2"
-                  htmlFor="excerpt"
+                  htmlFor="description"
                 >
-                  Excerpt *{" "}
+                  description *{" "}
                   <span className="text-blog-text">(max 200 characters)</span>
                 </label>
                 <textarea
-                  id="excerpt"
-                  name="excerpt"
-                  value={form.excerpt}
+                  id="description"
+                  name="description"
+                  value={form.description}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blog-primary h-20"
                   placeholder="A brief summary of your post"
                   maxLength={200}
-                  required
+                  // required
                 />
                 <p className="text-sm text-right text-blog-text mt-1">
-                  {form.excerpt.length}/200
+                  {form.description.length}/200
                 </p>
               </div>
 
               {/* Cover Image */}
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Cover Image
-                </label>
-                <div
-                  className={`border-2 border-dashed rounded-lg p-6 text-center ${
-                    isDragging
-                      ? "border-blog-primary bg-blog-light"
-                      : "border-gray-300"
-                  }`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
+                <label
+                  className="block text-sm font-medium mb-2"
+                  htmlFor="coverImage"
                 >
-                  {imagePreview ? (
-                    <div className="relative">
-                      <img
-                        src={imagePreview}
-                        alt="Cover preview"
-                        className="mx-auto max-h-64 rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm p-1 rounded-full"
-                        onClick={() => {
-                          setImagePreview("");
-                          setForm((prev) => ({ ...prev, coverImage: "" }));
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                        </svg>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <Image className="mx-auto h-12 w-12 text-gray-400" />
-                      <div className="flex items-center justify-center text-sm">
-                        <label
-                          htmlFor="file-upload"
-                          className="relative cursor-pointer rounded-md font-medium text-blog-primary hover:text-blog-primary/80 focus-within:outline-none"
-                        >
-                          <span>Upload a file</span>
-                          <input
-                            id="file-upload"
-                            name="file-upload"
-                            type="file"
-                            className="sr-only"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                          />
-                        </label>
-                        <p className="pl-1">or drag and drop</p>
-                      </div>
-                      <p className="text-xs text-blog-text">
-                        PNG, JPG, GIF up to 5MB
-                      </p>
-                    </div>
-                  )}
-                </div>
+                  Cover Image URL
+                </label>
+                <input
+                  id="coverImage"
+                  name="coverImage"
+                  type="text"
+                  value={form.coverImage}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blog-primary"
+                  placeholder="Enter the URL of the cover image"
+                />
+                {form.coverImage && (
+                  <img
+                    src={form.coverImage}
+                    alt="Cover Preview"
+                    className="mt-4 max-h-64 object-cover rounded-md"
+                  />
+                )}
               </div>
 
-              {/* Content */}
               <div>
                 <label
                   className="block text-sm font-medium mb-2"
@@ -299,10 +242,13 @@ const CreateBlog = () => {
               >
                 <button
                   type="submit"
-                  className="flex items-center bg-blog-primary text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors"
+                  disabled={isCreating}
+                  className={`flex items-center bg-blog-primary text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors ${
+                    isCreating ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   <Save size={18} className="mr-2" />
-                  Publish Post
+                  {isCreating ? "Creating..." : "Create Post"}
                 </button>
               </motion.div>
             </form>

@@ -1,5 +1,5 @@
-import { connectToDatabase } from "@/lib/mongodb";
-import Blog from "@/model/Blog";
+import { connectToDatabase } from "../../../lib/mongodb";
+import Blog from "../../../model/Blog";
 import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {
@@ -24,12 +24,13 @@ export async function POST(request) {
   try {
     await connectToDatabase();
     const body = await request.json();
-    const { title, content, slug, image } = body;
+    const { title, content, description, slug, coverImage } = body;
     const blog = await Blog.create({
       title,
       content,
       slug,
-      image,
+      coverImage,
+      description,
     });
     if (!blog) {
       return NextResponse.json(

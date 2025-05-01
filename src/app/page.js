@@ -4,8 +4,12 @@ import Link from "next/link";
 import FeaturedPost from "../components/FeaturedPost";
 import BlogCard from "../components/BlogCard";
 import NewsletterSignup from "../components/NewsletterSignup";
+import { Toaster } from "sonner";
+import { useBlogs } from "../hooks/useBlog";
 
 const Index = () => {
+  const { blogs, loading, error } = useBlogs();
+
   // Sample data - in a real app, this would come from your API
   const featuredPost = {
     title: "The Art of Minimalist Design in Modern Web Development",
@@ -16,38 +20,39 @@ const Index = () => {
     publishedAt: "2025-04-20T10:00:00.000Z",
   };
 
-  const recentPosts = [
-    {
-      title: "Creating Micro-interactions That Delight Users",
-      slug: "micro-interactions-delight-users",
-      excerpt:
-        "Learn how subtle animations and interactions can significantly improve user experience and engagement on your website.",
-      coverImage:
-        "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-      publishedAt: "2025-04-15T10:00:00.000Z",
-    },
-    {
-      title: "Typography Trends for Content-Focused Websites",
-      slug: "typography-trends-content-websites",
-      excerpt:
-        "Discover the latest typography trends that can enhance readability and visual appeal for content-heavy platforms.",
-      coverImage:
-        "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-      publishedAt: "2025-04-10T10:00:00.000Z",
-    },
-    {
-      title: "Color Psychology in UI Design: A Comprehensive Guide",
-      slug: "color-psychology-ui-design",
-      excerpt:
-        "An in-depth exploration of how color choices influence user perception, behavior, and emotional response to digital products.",
-      coverImage:
-        "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-      publishedAt: "2025-04-05T10:00:00.000Z",
-    },
-  ];
+  // const recentPosts = [
+  //   {
+  //     title: "Creating Micro-interactions That Delight Users",
+  //     slug: "micro-interactions-delight-users",
+  //     excerpt:
+  //       "Learn how subtle animations and interactions can significantly improve user experience and engagement on your website.",
+  //     coverImage:
+  //       "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+  //     publishedAt: "2025-04-15T10:00:00.000Z",
+  //   },
+  //   {
+  //     title: "Typography Trends for Content-Focused Websites",
+  //     slug: "typography-trends-content-websites",
+  //     excerpt:
+  //       "Discover the latest typography trends that can enhance readability and visual appeal for content-heavy platforms.",
+  //     coverImage:
+  //       "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+  //     publishedAt: "2025-04-10T10:00:00.000Z",
+  //   },
+  //   {
+  //     title: "Color Psychology in UI Design: A Comprehensive Guide",
+  //     slug: "color-psychology-ui-design",
+  //     excerpt:
+  //       "An in-depth exploration of how color choices influence user perception, behavior, and emotional response to digital products.",
+  //     coverImage:
+  //       "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
+  //     publishedAt: "2025-04-05T10:00:00.000Z",
+  //   },
+  // ];
 
   return (
     <>
+      <Toaster />
       {/* Hero Section */}
       <section className="py-12 md:py-20">
         <div className="container mx-auto px-4 md:px-6">
@@ -85,7 +90,7 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {recentPosts.map((post, index) => (
+            {blogs?.map((post, index) => (
               <motion.div
                 key={post.slug}
                 initial={{ opacity: 0, y: 20 }}
